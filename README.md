@@ -3,7 +3,7 @@
 Predicting passenger frequencies at Hardbrücke station in Zurich. Streamlit App that uses Machine Learning trained on Open Data from: https://data.stadt-zuerich.ch/dataset/vbz_frequenzen_hardbruecke
 
 View the app here:
-https://alexanderguentert-predict-hardbruecke-streamlit-app-11w7z3.streamlit.app/
+https://hardbruecke.streamlit.app/
 
 
 
