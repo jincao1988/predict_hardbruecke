@@ -61,7 +61,7 @@ def download_from_api(date, resource):
     url_day = """https://data.stadt-zuerich.ch/api/3/action/datastore_search_sql?""" \
         """sql=SELECT%20%22Timestamp%22,%22Name%22,%22In%22,%22Out%22%20""" \
         """from%20%22{resource}%22""" \
-        """where%20%22Timestamp%22::TIMESTAMP::DATE=%27{day}%27%20;"""
+        """where%20%22Timestamp%22::TIMESTAMP::DATE=%27{day}%27%20"""
     df = pd.read_json(url_day.format(day=date, resource=resource)).loc['records', 'result']
     df = pd.DataFrame.from_dict(df)
     if df.empty:
