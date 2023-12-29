@@ -41,7 +41,13 @@ def plot_day(df, day, name, regressor, XList):
     df_filter['prediction'] = regressor.predict(df_filter[XList])
     melted = df_filter.melt(id_vars=['Timestamp', 'direction', 'Name'], value_vars=['count', 'prediction'])
     melted['value'] = melted['value'].astype(float)
-    fig = px.line(melted, x='Timestamp', y='value', color='variable', facet_row='direction', title=name)
+    # rename for German display
+    melted = melted.replace(translate_dict)
+    fig = px.line(melted, x='Timestamp', y='value', color='variable', facet_row='direction', title=name,
+                 labels={
+                     "variable": "Datenreihe", "direction": "Richtung",
+                     "value": "Anzahl<BR>Personen", "Timestamp": "Uhrzeit"}
+                 )
     return fig
 
 
@@ -98,9 +104,13 @@ def plot_time_group(resource, frequency, aggregation):
         time_group_df = time_group_df.set_index('timestamp').stack().reset_index()
         time_group_df = time_group_df.rename(columns={'level_1': 'direction', 0: aggregation})
         time_group_df[aggregation] = time_group_df[aggregation].astype(float)
-
-        return px.line(time_group_df, x='timestamp', y=aggregation, color='direction', title='Zeitliche Verteilung',
-                       color_discrete_sequence=px.colors.qualitative.Dark2)
+        time_group_df = time_group_df.replace(translate_dict)
+        fig = px.line(time_group_df, x='timestamp', y=aggregation, color='direction', title='Zeitliche Verteilung',
+                       color_discrete_sequence=px.colors.qualitative.Dark2,
+                      labels={"direction": "Richtung", }
+                      )
+        fig.update_layout(yaxis_title=None, xaxis_title=None)
+        return fig
     else:
         return px.line(title='Keine Daten verfügbar')
 
@@ -115,9 +125,14 @@ def plot_name_group(resource, aggregation):
         name_group_df = name_group_df.set_index('Name').stack().reset_index()
         name_group_df = name_group_df.rename(columns={'level_1': 'direction', 0: aggregation})
         name_group_df[aggregation] = name_group_df[aggregation].astype(float)
-        return px.bar(name_group_df, x='Name', y=aggregation,
+        name_group_df = name_group_df.replace(translate_dict)
+        fig =  px.bar(name_group_df, x='Name', y=aggregation,
                       color='direction', barmode='group', title='Verteilung je Ort',
-                      color_discrete_sequence=px.colors.qualitative.Dark2)
+                      color_discrete_sequence=px.colors.qualitative.Dark2,
+                      labels={"direction": "Richtung", }
+                     )
+        fig.update_layout(yaxis_title=None, xaxis_title=None)
+        return fig
     else:
         return px.bar(title='Keine Daten verfügbar')
 
@@ -193,6 +208,10 @@ agg_dict = {
     'Maximum': 'MAX',
     'Summe': 'SUM',
     'Anzahl': 'COUNT',
+}
+translate_dict = {
+    'direction': {'In': 'Rein', 'Out': 'Raus', 'in': 'Rein', 'out': 'Raus'},
+    'variable': {'prediction': 'Prognose', 'count': 'Echter Wert'},
 }
 
 location_names = names.keys()
