@@ -106,7 +106,7 @@ def plot_time_group(resource, frequency, aggregation):
         time_group_df[aggregation] = time_group_df[aggregation].astype(float)
         time_group_df = time_group_df.replace(translate_dict)
         fig = px.line(time_group_df, x='timestamp', y=aggregation, color='direction', title='Zeitliche Verteilung',
-                       color_discrete_sequence=px.colors.qualitative.Dark2,
+                      color_discrete_sequence=px.colors.qualitative.Dark2,
                       labels={"direction": "Richtung", }
                       )
         fig.update_layout(yaxis_title=None, xaxis_title=None)
@@ -217,10 +217,6 @@ translate_dict = {
 location_names = names.keys()
 
 
-# load model
-filename_model = './models/RandomForestRegressor.sav'
-regressor = pickle.load(open(filename_model, 'rb'))
-
 st.set_page_config('Fahrgastfrequenzen Hardbrücke')
 st.title('Fahrgastfrequenzen an der VBZ-Haltestelle Hardbrücke')
 
@@ -234,6 +230,10 @@ with tab1:
                 Sehen Sie hier die Prognosen eines Modells, das mit den Daten der Vorjahre trainiert wurde. 
                 Sofern die tatsächlichen Frequenzen zur Verfügung stehen, können sie direkt mit den Prognosen verglichen werden.
                 ''')
+
+    # load model
+    filename_model = './models/RandomForestRegressor.sav'
+    regressor = pickle.load(open(filename_model, 'rb'))
 
     day_input = st.date_input(
         "Wählen Sie einen Tag:",
