@@ -141,6 +141,9 @@ def update_plots_tab1(date, location_name):
     year = date[0:4]
     if year in resource_api:
         resource_year = resource_api[year]
+        # in these years the location names in api do not contain ü. So remove
+        if year in ("2020", "2021"):
+            location_name = location_name.replace("ü", "")
         # data from api
         data_available, df_api = download_from_api(date, resource_year)
         if data_available:
@@ -214,8 +217,6 @@ translate_dict = {
     'variable': {'prediction': 'Prognose', 'count': 'Echter Wert'},
 }
 
-location_names = names.keys()
-
 
 st.set_page_config('Fahrgastfrequenzen Hardbrücke')
 st.title('Fahrgastfrequenzen an der VBZ-Haltestelle Hardbrücke')
@@ -238,7 +239,8 @@ with tab1:
     day_input = st.date_input(
         "Wählen Sie einen Tag:",
         )
-    location_radio = st.radio('Eingang', names.keys(), horizontal=True)
+    location_names_radio = [elem for elem in names.keys() if elem not in ('Ost-Sd total', 'West-Sd total')]
+    location_radio = st.radio('Eingang', location_names_radio, horizontal=True)
     fig = update_plots_tab1(day_input.strftime('%Y-%m-%d'), location_radio)
     st.plotly_chart(fig)
 
